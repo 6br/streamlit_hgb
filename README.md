@@ -14,7 +14,7 @@ $ pip install pyyaml # install pyyaml
 * frontend
 
 ```bash
-$ template/hgb/frontend
+$ hgb/frontend
 $ npm install    # Initialize the project and install npm dependencies
 $ npm run start  # Start the Webpack dev server
 ```
