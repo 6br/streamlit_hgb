@@ -2,10 +2,9 @@
 
 A streamlit component for a hybrid genome browser
 
-* 
+* virtualenv
 
 ```bash
-$ cd template
 $ python3 -m venv venv  # create venv
 $ . venv/bin/activate   # activate venv
 $ pip install streamlit # install streamlit
