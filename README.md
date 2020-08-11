@@ -27,3 +27,20 @@ export HGB_BIN=/*location_to_hgb_binary */
 
 streamlit run hgb/__init__.py 
 ```
+
+## Example of `config.yaml`
+
+```yaml
+hg38:
+  range: 
+    - chr1:1-1000001
+  default:
+    - "/path/to/bamfile1.bam"
+  samples: 
+    - "/path/to/bamfile1.bam"
+    - "/path/to/bamfile2.bam"
+```
+
+* Range: a default range to visualize
+* Default: a default set of BAM file to be loaded
+* Samples: a list of BAM file
