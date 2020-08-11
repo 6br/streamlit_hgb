@@ -159,40 +159,56 @@ if not _RELEASE:
     # and lose its current state. In this case, we want to vary the component's
     # "name" argument without having it get recreated.
     # name_input = st.text_input("Enter a file name", value="../../bt142/ont2_ngmlr.bam")
-    yaml = load_samples("hgb/config.yaml")
-    ref = st.sidebar.selectbox("Which references to use?", list(yaml.keys()) ,1)
+    try:
+        yaml = load_samples("hgb/config2.yaml")
 
-    name_input = st.sidebar.multiselect("Which files to load?",
-        yaml[ref]["samples"],
-        list(yaml[ref]["default"])
-    )
+        ref = st.sidebar.selectbox("Which references to use?", list(yaml.keys()) ,1)
+
+        name_input = st.sidebar.multiselect("Which files to load?",
+          yaml[ref]["samples"],
+          list(yaml[ref]["default"])
+        )
+        refs = reference_hash(yaml[ref]["samples"][0]) 
+        default_range = yaml[ref]["range"][0]
+    except:    
+        name_input = st.sidebar.text_input("Which file to explore?")
+        refs = reference_hash(name_input)
+        if len(refs) > 0:
+            default_range = "{}:1-10001".format(next(iter(refs)))
+        else:
+            default_range = ""
+    
     #range_candidate = st.sidebar
-    refs = reference_hash(yaml[ref]["samples"][0]) 
-    region = st.sidebar.text_input("Where to explore?", yaml[ref]["range"][0])
-    chr_def, region_chr = region.split(":")
-    car, cdr = region_chr.split("-")
-    chr = list(refs.keys())
-
-    ref_id = st.sidebar.selectbox(
-       'Which chromosome to display?',
-        chr, chr.index(chr_def))
-    range = st.sidebar.slider(
-     'Select a range of values',
-     0, refs[ref_id], (int(car), int(cdr)))
-
+    region = st.sidebar.text_input("Where to explore?", default_range) #yaml[ref]["range"][0])
     split=False
     coverage=50
     y=64
     callet=True
     no_ins=False
 
-    if st.sidebar.checkbox("Detail"):
-        num = st.sidebar.number_input("Enter a start coordinate", 0, refs[ref_id], range[0])
-        num2 = st.sidebar.number_input("Enter a stop coordinate", 0, refs[ref_id], range[1])
-        coverage = st.sidebar.number_input('The expected coverage', 1, 500, coverage)
-        split = st.sidebar.checkbox('Split-alignment only view')
-        callet = st.sidebar.checkbox('Show callets only intra-chromosomal split alignment', True)
-        y = st.sidebar.number_input("Set a read height", 8, 128, y)
+    if len(refs) > 0:
+        chr_def, region_chr = region.split(":")
+        car, cdr = region_chr.split("-")
+        chr = list(refs.keys())
+
+        ref_id = st.sidebar.selectbox(
+        'Which chromosome to display?',
+        chr, chr.index(chr_def))
+        range = st.sidebar.slider(
+         'Select a range of values',
+         0, refs[ref_id], (int(car), int(cdr)))
+
+
+        if st.sidebar.checkbox("Detail"):
+            num = st.sidebar.number_input("Enter a start coordinate", 0, refs[ref_id], range[0])
+            num2 = st.sidebar.number_input("Enter a stop coordinate", 0, refs[ref_id], range[1])
+            coverage = st.sidebar.number_input('The expected coverage', 1, 500, coverage)
+            split = st.sidebar.checkbox('Split-alignment only view')
+            callet = st.sidebar.checkbox('Show callets only intra-chromosomal split alignment', True)
+            y = st.sidebar.number_input("Set a read height", 8, 128, y)
+
+        if range[1] - range[0] <= 1000*1000*12:
+            num_clicks = hgb(name_input, ref_id, range, coverage, split, y, callet)
 
     st.markdown(
         f"""
@@ -205,5 +221,3 @@ if not _RELEASE:
         unsafe_allow_html=True,
     )
 
-    if range[1] - range[0] <= 1000*1000*12:
-        num_clicks = hgb(name_input, ref_id, range, coverage, split, y, callet)
