@@ -44,3 +44,5 @@ hg38:
 * Range: a default range to visualize
 * Default: a default set of BAM file to be loaded
 * Samples: a list of BAM file
+
+All input bam files must be indexed by `samtools index` or compatibles.
