@@ -1,4 +1,5 @@
 hg38:
-  range: chr1:1-1000001
+  range: 
+    - chr1:1-1000001
   default: []
   samples: [] 
