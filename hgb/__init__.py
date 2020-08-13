@@ -117,6 +117,7 @@ def hgb(name, ref_id, range, coverage, split=False, y=32, callet=False, hide_ins
     
     exact_end = (span if span > min_span else min_span) + range[0]
     param = "-t 2 vis -M 2048 -X 512 -Y 1024 -P -a {} -y {} -S -w {}:{} -r {}:{}-{} -R {}:{}-{} -Q -m {}".format(" ".join(name), y, host, port, ref_id, range[0], exact_end, ref_id, cache_start, range[1] + offset, coverage)
+    ppm = exact_end - range[0]
     if split:
       param += " -s -u"
     if callet:
@@ -133,7 +134,7 @@ def hgb(name, ref_id, range, coverage, split=False, y=32, callet=False, hide_ins
     for line in proc.stdout:
         line = line.decode().rstrip()
         if (line).startswith("Server is running"):
-            component_value = _component_func(host=host, port=port, default={})
+            component_value = _component_func(host=host, port=port, ppm=ppm,default={})
             return ref_id, range, component_value
             #break
 
@@ -160,7 +161,7 @@ if not _RELEASE:
     # "name" argument without having it get recreated.
     # name_input = st.text_input("Enter a file name", value="../../bt142/ont2_ngmlr.bam")
     try:
-        yaml = load_samples("hgb/config2.yaml")
+        yaml = load_samples("hgb/config.yaml")
 
         ref = st.sidebar.selectbox("Which references to use?", list(yaml.keys()) ,1)
 

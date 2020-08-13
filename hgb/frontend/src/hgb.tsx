@@ -6,6 +6,7 @@ import {
 } from "./streamlit"
 //import { OpenSeadragonViewer } from "openseadragon-react-viewer"
 import OpenSeadragon from "openseadragon"
+require( "./openseadragon-scalebar");
 
 interface State {
   numClicks: number
@@ -40,6 +41,20 @@ class HGB extends StreamlitComponentBase<State> {
         minZoomLevel:     18,
         visibilityRatio:    0.25,
         tileSources:   url,
+    });
+    var pixel = this.props.args["ppm"];
+    viewer.addHandler("open", function() {
+        var maxZoom = viewer.viewport.getMaxZoom();
+        viewer.viewport.zoomTo(maxZoom, null, true);
+        viewer.viewport.minZoomLevel = maxZoom / 256;
+        viewer.scalebar({
+            minWidth: "10%",
+            type: "Map",
+            location: 2,
+            pixelsPerMeter: viewer.source.height / pixel,
+            stayInsideImage: false,
+            yOffset: 30
+        });
     });
     Streamlit.setFrameHeight();
   }
