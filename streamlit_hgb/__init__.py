@@ -60,6 +60,8 @@ def load_samples(yaml_file):
 # Retrieve reference name and length from bam/ghb
 @st.cache()
 def reference_hash(name):
+    if name == "":
+        return {}
     binary = os.environ.get("HGB_BIN", "hgb")
     if name.endswith(".ghb"):
         param = "decompose -f {}".format(name)
@@ -127,7 +129,7 @@ def hgb(name, ref_id, range, coverage, split=False, y=32, callet=False, hide_ins
     if no_pack:
       param += " -p"
     cmd = ["nohup", binary, *param.split()]
-    print(cmd)
+    print(" ".join(cmd))
     
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
     line = proc.stdout.readline()
@@ -136,7 +138,6 @@ def hgb(name, ref_id, range, coverage, split=False, y=32, callet=False, hide_ins
         if (line).startswith("Server is running"):
             component_value = _component_func(host=host, port=port, ppm=ppm,default={})
             return ref_id, range, component_value
-            #break
 
     # We could modify the value returned from the component if we wanted.
     # There's no need to do this in our simple example - but it's an option.
