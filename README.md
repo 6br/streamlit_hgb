@@ -23,7 +23,7 @@ $ npm run start  # Start the Webpack dev server
 
 ```bash
 export STREAMLIT_HOST=$(hostname -i)
-export HGB_BIN=/*location_to_hgb_binary */
+export HGB_BIN=/*location_to_hgb_binary*/
 
 streamlit run hgb/__init__.py 
 ```
