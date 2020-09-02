@@ -1,7 +1,7 @@
 import setuptools
 
 setuptools.setup(
-    name="streamlit-hgb",
+    name="streamlit_hgb",
     version="0.0.1",
     author="",
     author_email="",
