@@ -113,7 +113,7 @@ def hgb(name, ref_id, range, coverage, split=False, y=32, callet=False, hide_ins
     port = find_free_port(host)
     binary = os.environ.get("HGB_BIN", "hgb")
     offset = 100 * 1000
-    cache_start = range[0] - offset if range[0] - offset > 0 else 0
+    cache_start = range[0] - offset if range[0] - offset > 1 else 1
     min_span = 10
     span = int((range[1]-range[0])/100)
     
