@@ -60,6 +60,20 @@ def load_samples(yaml_file):
 # Retrieve reference name and length from bam/ghb
 @st.cache()
 def reference_hash(name):
+    """Calculate length of reference chromosomes.
+
+    Parameters
+    ----------
+    name: str,
+        A file name of BAM file to calculate.
+
+    Returns
+    -------
+    hash
+        Key: chromosome id, value: reference length.
+
+    """
+
     if name == "":
         return {}
     binary = os.environ.get("HGB_BIN", "hgb")
@@ -76,38 +90,37 @@ def reference_hash(name):
             hash[line[0]] = int(line[1])
     return hash
 
-# Create a wrapper function for the component. This is an optional
-# best practice - we could simply expose the component function returned by
-# `declare_component` and call it done. The wrapper allows us to customize
-# our component's API: we can pre-process its input args, post-process its
-# output value, and add a docstring for users.
 #@st.cache()
-def hgb(name, ref_id, range, coverage, split=False, y=32, callet=False, hide_ins=False, no_pack=False):
-    """Create a new instance of "my_component".
+def hgb(name, ref_id, range, coverage, opts="", split=False, y=32, callet=False, hide_ins=False, no_pack=False):
+    """Create a new instance of "hgb".
 
     Parameters
     ----------
     name: str,
         A file name to display.
-    ref_id: str
+    ref_id: str,
         A chromosome id to display.
-    split: True or None
-        An optional key that uniquely identifies this component. If this is
-        None, and the component's arguments are changed, the component will
-        be re-mounted in the Streamlit frontend and lose its current state.
+    range: range,
+        A genomic range.
+    opts: str,
+        An optional option to pass hgb vis commands.
+    split: True or False,
+        Display split alignments in the same line.
+    y: int,
+        The height of each read alignment.
+    callet: True or False,
+        Show callets on ends of read alignments if the read contains translocationial split-alignment.
+    hide_ins: True or False,
+        Hide insertion callets on read alignments.
+    no_pack: True or False,
+        Disable read packing.
 
     Returns
     -------
-    hash
+    ref_id, range, component
         The legend of annotations.
 
     """
-    # Call through to our private component function. Arguments we pass here
-    # will be sent to the frontend, where they'll be available in an "args"
-    # dictionary.
-    #
-    # "default" is a special argument that specifies the initial return
-    # value of the component before the user has interacted with it.
 
     host = os.environ.get("STREAMLIT_HOST", "localhost")
     port = find_free_port(host)
@@ -118,7 +131,7 @@ def hgb(name, ref_id, range, coverage, split=False, y=32, callet=False, hide_ins
     span = int((range[1]-range[0])/100)
     
     exact_end = (span if span > min_span else min_span) + range[0]
-    param = "-t 2 vis -M 2048 -X 512 -Y 1024 -P -a {} -y {} -S -w {}:{} -r {}:{}-{} -R {}:{}-{} -Q -m {}".format(" ".join(name), y, host, port, ref_id, range[0], exact_end, ref_id, cache_start, range[1] + offset, coverage)
+    param = "-t 2 vis -M 2048 -X 512 -Y 1024 -P -a {} -y {} -S -w {}:{} -r {}:{}-{} -R {}:{}-{} -Q -m {} {}".format(" ".join(name), y, host, port, ref_id, range[0], exact_end, ref_id, cache_start, range[1] + offset, coverage, opts)
     ppm = exact_end - range[0]
     if split:
       param += " -s -u"
