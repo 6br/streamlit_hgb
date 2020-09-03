@@ -1,4 +1,8 @@
 import setuptools
+from os import path
+this_directory = path.abspath(path.dirname(__file__))
+with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
 
 setuptools.setup(
     name="streamlit_hgb",
@@ -6,8 +10,8 @@ setuptools.setup(
     author="6br",
     author_email="",
     description="A streamlit component for a hybrid genome browser",
-    long_description="A streamlit component for a hybrid genome browser",
-    long_description_content_type="text/plain",
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     url="https://github.com/6br/streamlit_hgb",
     packages=setuptools.find_packages(),
     include_package_data=True,
