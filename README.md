@@ -1,5 +1,8 @@
 # Streamlit-HGB
 
+[![PyPI version](https://badge.fury.io/py/streamlit-hgb.svg)](https://badge.fury.io/py/streamlit-hgb)
+[![Python Versions](https://img.shields.io/pypi/pyversions/streamlit-hgb.svg)](https://pypi.org/project/streamlit-hgb/)
+
 A streamlit component for a hybrid genome browser
 
 * virtualenv
