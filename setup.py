@@ -6,7 +6,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 
 setuptools.setup(
     name="streamlit_hgb",
-    version="0.0.1",
+    version="0.0.2",
     author="6br",
     author_email="",
     description="A streamlit component for a hybrid genome browser",
