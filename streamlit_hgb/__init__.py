@@ -125,22 +125,23 @@ def hgb_run(name, ref_id, range, coverage=None, opts="", split=False, y=32, call
     """
 
     binary = os.environ.get("HGB_BIN", "hgb")
-    with tempfile.NamedTemporaryFile(prefix="png") as fp:
-      param = "-t 2 vis -P -a {} -y {} -S -r {}:{}-{} -o {} {}".format(" ".join(name), y, ref_id, range[0], range[1], fp.name, opts)
-      if split:
-        param += " -s -u"
-      if callet:
-        param += " -e -T"
-      if hide_ins:
-        param += " -I"
-      if no_pack:
-        param += " -p"
-      if coverage:
-        param += " -m {}".format(coverage)
-      cmd = [binary, *param.split()]
-      subprocess.run(cmd)
-    
-      return Image.open(fp.name)
+    fp = tempfile.NamedTemporaryFile(suffix=".png")
+    param = "-t 2 vis -P -a {} -y {} -S -r {}:{}-{} -o {} {}".format(" ".join(name), y, ref_id, range[0], range[1], fp.name, opts)
+    if split:
+      param += " -s -u"
+    if callet:
+      param += " -e -T"
+    if hide_ins:
+      param += " -I"
+    if no_pack:
+      param += " -p"
+    if coverage:
+      param += " -m {}".format(coverage)
+    cmd = [binary, *param.split()]
+    print(" ".join(cmd))
+    complete_process = subprocess.run(cmd, check=True)
+     
+    return Image.open(fp.name)
 
 #@st.cache()
 def hgb(name, ref_id, range, coverage, opts="", split=False, y=32, callet=False, hide_ins=False, no_pack=False):
