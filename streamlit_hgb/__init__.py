@@ -6,6 +6,8 @@ from contextlib import closing
 import subprocess
 import time
 import yaml
+import tempfile
+from PIL import Image
 
 def find_free_port(host):
     with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
@@ -89,6 +91,57 @@ def reference_hash(name):
         if len(line) > 1:
             hash[line[0]] = int(line[1])
     return hash
+
+def hgb_run(name, ref_id, range, coverage=None, opts="", split=False, y=32, callet=False, hide_ins=False, no_pack=False):
+    """Create a single image by "hgb".
+
+    Parameters
+    ----------
+    name: str,
+        A file name to display.
+    ref_id: str,
+        A chromosome id to display.
+    range: range,
+        A genomic range.
+    coverge: None or int,
+        A height of alignment view. 
+    opts: str,
+        An optional option to pass hgb vis commands.
+    split: True or False,
+        Display split alignments in the same line.
+    y: int,
+        The height of each read alignment.
+    callet: True or False,
+        Show callets on ends of read alignments if the read contains translocationial split-alignment.
+    hide_ins: True or False,
+        Hide insertion callets on read alignments.
+    no_pack: True or False,
+        Disable read packing.
+
+    Returns
+    -------
+    image
+        A single image.
+    """
+
+    binary = os.environ.get("HGB_BIN", "hgb")
+    fp = tempfile.NamedTemporaryFile(suffix=".png")
+    param = "-t 2 vis -P -a {} -y {} -S -r {}:{}-{} -o {} {}".format(" ".join(name), y, ref_id, range[0], range[1], fp.name, opts)
+    if split:
+      param += " -s -u"
+    if callet:
+      param += " -e -T"
+    if hide_ins:
+      param += " -I"
+    if no_pack:
+      param += " -p"
+    if coverage:
+      param += " -m {}".format(coverage)
+    cmd = [binary, *param.split()]
+    print(" ".join(cmd))
+    complete_process = subprocess.run(cmd, check=True)
+     
+    return Image.open(fp.name)
 
 #@st.cache()
 def hgb(name, ref_id, range, coverage, opts="", split=False, y=32, callet=False, hide_ins=False, no_pack=False):

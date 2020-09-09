@@ -22,6 +22,7 @@ setuptools.setup(
         # If your component has other Python dependencies, list
         # them here.
         "streamlit >= 0.63",
-        "pyyaml"
+        "pyyaml",
+        "Pillow >= 7.1.2",
     ],
 )
