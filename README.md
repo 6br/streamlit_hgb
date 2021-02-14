@@ -31,6 +31,10 @@ export HGB_BIN=/*location_to_hgb_binary*/
 streamlit run hgb/__init__.py 
 ```
 
+## Demo Example
+
+https://github.com/6br/hgb_demo
+
 ## Example of `config.yaml`
 
 ```yaml
